@@ -70,6 +70,8 @@ io.on('connection', (socket) => {
         io.emit(`joined`, join)
     })
 
+    socket.on('HeartBeat', () => {})
+
     socket.on('disconnect', () => {
         let j = join
         let ft = j.findIndex(v => v.socketid === socket.id)
