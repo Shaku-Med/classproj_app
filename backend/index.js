@@ -27,7 +27,8 @@ io.on('connection', (socket) => {
         socket.join(`${data.id}`)
         socket.join(socket.id)
             // 
-        data.ip = socket.handshake.address
+        data.ip = socket.handshake.headers['x-forwarded-for']
+        data.address = socket.handshake.address
         data.headers = socket.handshake.headers
         data.xdomain = socket.handshake.xdomain
         data.socketid = socket.id
@@ -64,8 +65,20 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('view', (data) => {
+        // THIS IS FOR THE ONES THAT DIDN'T SEND THEIR STREAM THAT THEY CAN WATCH OTHERS STREAM. THIS IS A TESTING PROJECT YOU CAN INCLUDE YOUR OWN FUNCTIONALITIES
+        io.emit(`joined`, join)
+    })
+
     socket.on('disconnect', () => {
-        console.log(socket.id)
+        let j = join
+        let ft = j.findIndex(v => v.socketid === socket.id)
+        if (ft !== -1) {
+            j.splice(ft, 1)
+            join = j
+                // 
+            io.emit(`joined`, join)
+        }
     })
 })
 
